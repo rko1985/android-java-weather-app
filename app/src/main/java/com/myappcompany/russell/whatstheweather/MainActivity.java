@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,18 +17,23 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
+    EditText editText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        editText = findViewById(R.id.editText);
+
     }
 
     public void getWeather(View view) {
 
+
         DownloadTask task = new DownloadTask();
         try {
-            task.execute("https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=b6907d289e10d714a6e88b30761fae22").get();
+            task.execute("https://api.openweathermap.org/data/2.5/weather?q=" + editText.getText().toString() +"&appid=57a1c912214a8a43de668d18af5610ab").get();
         } catch (Exception e) {
             e.printStackTrace();
         }
