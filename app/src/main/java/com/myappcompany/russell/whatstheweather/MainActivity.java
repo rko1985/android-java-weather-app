@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     EditText editText;
+    TextView resultTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         editText = findViewById(R.id.editText);
+        resultTextView = findViewById(R.id.resultTextView);
 
     }
 
@@ -78,10 +81,21 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Weather content", weatherInfo);
                 JSONArray arr = new JSONArray(weatherInfo);
 
+                String message = "";
+
                 for (int i = 0; i < arr.length(); i++){
                     JSONObject jsonPart = arr.getJSONObject(i);
-                    Log.i("main", jsonPart.getString("main"));
-                    Log.i("description", jsonPart.getString("description"));
+
+                    String main = jsonPart.getString("main");
+                    String description = jsonPart.getString("description");
+
+                    if(!main.equals("") && !description.equals("")){
+                        message += main + ": " + description + "\r\n";
+                    }
+                }
+
+                if (!message.equals("")){
+                    resultTextView.setText(message);
                 }
 
             } catch (Exception e){
