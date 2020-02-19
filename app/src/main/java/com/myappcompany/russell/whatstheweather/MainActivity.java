@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,16 +37,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void getWeather(View view) {
 
-
-        DownloadTask task = new DownloadTask();
         try {
-            task.execute("https://api.openweathermap.org/data/2.5/weather?q=" + editText.getText().toString() +"&appid=57a1c912214a8a43de668d18af5610ab").get();
+            DownloadTask task = new DownloadTask();
+
+            //making city name safer
+            String encodedCityName = URLEncoder.encode(editText.getText().toString(), "UTF-8");
+
+            task.execute("https://api.openweathermap.org/data/2.5/weather?q=" + encodedCityName +"&appid=57a1c912214a8a43de668d18af5610ab").get();
+
+            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Could not find weather = (", Toast.LENGTH_SHORT).show();
         }
 
-        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
 
     }
 
@@ -72,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
                 return result;
             } catch (Exception e) {
                 e.printStackTrace();
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Could not find weather ", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 return null;
             }
         }
@@ -101,9 +116,22 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!message.equals("")){
                     resultTextView.setText(message);
+                } else {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Could not find weather ", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
             } catch (Exception e){
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Could not find weather ", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 e.printStackTrace();
             }
 
